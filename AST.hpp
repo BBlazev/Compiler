@@ -44,7 +44,8 @@ public:
     : Callee(callee), Args(std::move(args)) {} 
 };
 
-class PrototypeAST {
+class PrototypeAST 
+{
     std::string Name;
     std::vector<std::string> Args;
 public:
@@ -52,4 +53,14 @@ public:
     : Name(name), Args(std::move(args)) {}
 
     const std::string &getName() const {return Name;}
+};
+
+class FunctionAST 
+{
+    std::unique_ptr<PrototypeAST> Proto;
+    std::unique_ptr<ExpressionAST> Body;
+public:
+    FunctionAST(std::unique_ptr<PrototypeAST> proto,
+                std::unique_ptr<ExpressionAST> body)
+    : Proto(std::move(proto)), Body(std::move(body)) {}
 };
