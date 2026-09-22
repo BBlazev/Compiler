@@ -1,0 +1,9 @@
+build/
+compile_commands.json
+.cache/
+
+# compiler output while testing
+*.s
+*.o
+*.i
+a.out
