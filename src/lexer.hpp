@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <iterator>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -14,6 +15,7 @@ enum class TokenType {
     PUNCTUATORS,
     SEMICOLON,
     OPERATOR,
+    DOUBLE_OPERATOR,
     UNKNOWN
 
 };
@@ -52,6 +54,9 @@ class Lexer {
     bool isAlpha(char c) noexcept;
     bool isDigit(char c) noexcept;
     bool isAlphaNumeric(char c) noexcept;
+    bool isOperator(char c) noexcept;
+    char peek() noexcept;
+
     std::string getNextWord() noexcept;
     std::string getNextNumber() noexcept;
 };

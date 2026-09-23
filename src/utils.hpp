@@ -16,6 +16,8 @@ std::ostream &operator<<(std::ostream &os, const TokenType &type) {
         return os << "FLOAT_CONSTANT";
     case TokenType::OPERATOR:
         return os << "OPERATOR";
+    case TokenType::DOUBLE_OPERATOR:
+        return os << "DOUBLE_OPERATOR";
     case TokenType::KEYWORD:
         return os << "KEYWORD";
     case TokenType::PUNCTUATORS:

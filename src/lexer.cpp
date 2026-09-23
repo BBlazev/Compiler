@@ -68,6 +68,8 @@ std::string Lexer::getNextNumber() noexcept {
     return input.substr(start, position - start);
 }
 
+char Lexer::peek() noexcept { return input[position + 1]; }
+
 std::vector<Token> Lexer::lex() {
 
     std::vector<Token> tokens;
@@ -85,9 +87,9 @@ std::vector<Token> Lexer::lex() {
         else if (isAlpha(currentChar)) {
             std::string word = getNextWord();
             if (keywords.find(word) != keywords.end()) {
-                tokens.emplace_back(TokenType::KEYWORD, word, line_number, col);
+                tokens.emplace_back(TokenType::KEYWORD, std::move(word), line_number, col);
             } else {
-                tokens.emplace_back(TokenType::IDENTIFIER, word, line_number, col);
+                tokens.emplace_back(TokenType::IDENTIFIER, std::move(word), line_number, col);
             }
         }
 
@@ -97,17 +99,29 @@ std::vector<Token> Lexer::lex() {
                 num += getNextWord();
                 throw std::runtime_error("Error\n");
             } else if (num.find('.') != std::string::npos) {
-                tokens.emplace_back(TokenType::FLOAT_CONSTANT, num, line_number, col);
+                tokens.emplace_back(TokenType::FLOAT_CONSTANT, std::move(num), line_number, col);
             } else {
-                tokens.emplace_back(TokenType::INTEGER_CONSTANT, num, line_number, col);
+                tokens.emplace_back(TokenType::INTEGER_CONSTANT, std::move(num), line_number, col);
             }
         }
 
         else if (currentChar == '+' || currentChar == '-' || currentChar == '*' ||
-                 currentChar == '/') {
-            tokens.emplace_back(TokenType::OPERATOR, std::string(1, currentChar), line_number, col);
-            position++;
-            column_number++;
+                 currentChar == '/' || currentChar == '=') {
+            char next = peek();
+
+            if (next == '+' || next == '-' || next == '*' || next == '/' || next == '=') {
+                std::string s = std::string(1, currentChar) + next;
+                tokens.emplace_back(TokenType::DOUBLE_OPERATOR, std::move(s), line_number, col);
+                position += 2;
+                column_number += 2;
+            } else {
+                tokens.emplace_back(TokenType::OPERATOR, std::string(1, currentChar), line_number,
+                                    col);
+                position++;
+                column_number++;
+                {
+                }
+            }
         }
 
         else if (currentChar == '(' || currentChar == ')' || currentChar == '{' ||
