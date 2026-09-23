@@ -124,7 +124,8 @@ std::vector<Token> Lexer::lex() {
         //}
 
         else {
-            throw std::runtime_error("Unknow char\n");
+            throw std::runtime_error(std::to_string(line_number) + ":" + std::to_string(col) +
+                                     ": Unknown character '" + currentChar + "'\n");
             //	tokens.emplace_back(TokenType::UNKNOWN, std::string(1, currentChar));
             //	position++;
         }
