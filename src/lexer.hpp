@@ -47,6 +47,10 @@ class Lexer {
   private:
     std::string input;
     std::size_t position;
+
+    int line_number = 1;
+    int column_number = 1;
+
     std::unordered_map<std::string, TokenType> keywords;
 
     void init() noexcept;

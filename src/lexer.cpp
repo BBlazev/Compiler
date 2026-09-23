@@ -1,11 +1,7 @@
 #include <cstddef>
-#include <iostream>
 #include <stdexcept>
 
 #include "lexer.hpp"
-
-static int line_number = 1;
-static int column_number = 1;
 
 Lexer::Lexer(const std::string &src) : input(src), position(0) { init(); }
 
