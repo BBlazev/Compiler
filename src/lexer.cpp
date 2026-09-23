@@ -1,1 +1,115 @@
+#include <cstddef>
+#include <iostream>
+#include <stdexcept>
+
 #include "lexer.hpp"
+
+Lexer::Lexer(const std::string &src) : input(src), position(0) { init(); }
+
+Lexer::~Lexer() {}
+
+void Lexer::init() noexcept {
+
+    keywords["int"] = TokenType::KEYWORD;
+    keywords["float"] = TokenType::KEYWORD;
+    keywords["if"] = TokenType::KEYWORD;
+    keywords["else"] = TokenType::KEYWORD;
+    keywords["while"] = TokenType::KEYWORD;
+    keywords["return"] = TokenType::KEYWORD;
+    keywords["void"] = TokenType::KEYWORD;
+}
+
+bool Lexer::isWhiteSpace(char c) noexcept {
+
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+bool Lexer::isDigit(char c) noexcept { return c >= '0' && c <= '9'; }
+
+bool Lexer::isAlpha(char c) noexcept {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
+}
+
+bool Lexer::isAlphaNumeric(char c) noexcept { return isAlpha(c) || isDigit(c); }
+
+std::string Lexer::getNextWord() noexcept {
+
+    std::size_t start = position;
+
+    while (position < input.length() && isAlphaNumeric(input[position]))
+        position++;
+
+    return input.substr(start, position - start);
+}
+
+std::string Lexer::getNextNumber() noexcept {
+
+    size_t start = position;
+    bool hasDecimal = false;
+
+    while (position < input.length() && (isDigit(input[position]) || input[position] == '.')) {
+        if (input[position] == '.') {
+            if (hasDecimal)
+                break;
+            hasDecimal = true;
+        }
+        position++;
+    }
+    return input.substr(start, position - start);
+}
+
+std::vector<Token> Lexer::lex() {
+
+    std::vector<Token> tokens;
+
+    while (position < input.length()) {
+
+        char currentChar = input[position];
+
+        if (isWhiteSpace(currentChar)) {
+            position++;
+            continue;
+        }
+
+        else if (isAlpha(currentChar)) {
+            std::string word = getNextWord();
+            if (keywords.find(word) != keywords.end()) {
+                tokens.emplace_back(TokenType::KEYWORD, word);
+            } else {
+                tokens.emplace_back(TokenType::IDENTIFIER, word);
+            }
+        }
+
+        else if (isDigit(currentChar)) {
+            std::string num = getNextNumber();
+            if (isAlpha(input[position])) {
+                num += getNextWord();
+                throw std::runtime_error("Error\n");
+            } else if (num.find('.') != std::string::npos) {
+                tokens.emplace_back(TokenType::FLOAT_CONSTANT, num);
+            } else {
+                tokens.emplace_back(TokenType::INTEGER_CONSTANT, num);
+            }
+        }
+
+        else if (currentChar == '+' || currentChar == '-' || currentChar == '*' ||
+                 currentChar == '/') {
+            tokens.emplace_back(TokenType::OPERATOR, std::string(1, currentChar));
+            position++;
+        }
+
+        else if (currentChar == '(' || currentChar == ')' || currentChar == '{' ||
+                 currentChar == '}' || currentChar == ';') {
+            tokens.emplace_back(TokenType::PUNCTUATORS, std::string(1, currentChar));
+            position++;
+        }
+
+        else {
+            throw std::runtime_error("Unknow char\n");
+            //	tokens.emplace_back(TokenType::UNKNOWN, std::string(1, currentChar));
+            //	position++;
+        }
+    }
+
+    return tokens;
+}

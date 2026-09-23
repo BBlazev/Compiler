@@ -1,5 +1,6 @@
 #include <cstdlib>
 
+#include <exception>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -9,6 +10,8 @@
 #include <string>
 #include <system_error>
 
+#include "lexer.hpp"
+
 int main(int argc, char *argv[]) {
 
     std::string stage;
@@ -17,7 +20,7 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
 
         std::string arg = argv[i];
-        if (arg.starts_with("--") == 0)
+        if (arg.starts_with("--"))
             stage = arg;
         else
             input = arg;
@@ -43,12 +46,20 @@ int main(int argc, char *argv[]) {
     std::ifstream file(preprocessed);
     std::string source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    // auto tokens =  lex(source);
+    Lexer lexer(source);
 
-    std::filesystem::path asm_file = input;
-    asm_file.replace_extension(".s");
-    std::filesystem::remove(asm_file);
-    std::filesystem::remove(preprocessed);
+    try {
+        auto tokens = lexer.lex();
+        for (auto &a : tokens)
+            std::cout << a.value << "\n";
+    } catch (std::exception &e) {
+        std::cerr << e.what();
 
+        std::filesystem::path asm_file = input;
+        asm_file.replace_extension(".s");
+        std::filesystem::remove(asm_file);
+        std::filesystem::remove(preprocessed);
+        return 1;
+    }
     return 0;
 }

@@ -1,3 +1,4 @@
+#pragma once
 
 #include <cstddef>
 #include <string>
@@ -9,9 +10,10 @@ enum class TokenType {
     IDENTIFIER,
     KEYWORD,
     INTEGER_CONSTANT,
-    OPEN,
-    CLOSE,
+    FLOAT_CONSTANT,
+    PUNCTUATORS,
     SEMICOLON,
+    OPERATOR,
     UNKNOWN
 
 };
@@ -27,7 +29,7 @@ struct Token {
 class Lexer {
 
   public:
-    Lexer();
+    Lexer(const std::string &src);
     ~Lexer();
 
     Lexer(const Lexer &) = delete;
@@ -35,20 +37,18 @@ class Lexer {
     Lexer &operator=(const Lexer &) = delete;
     Lexer &operator=(Lexer &&) = delete;
 
-    std::vector<Token> lex(std::string source);
+    std::vector<Token> lex();
 
   private:
     std::string input;
     std::size_t position;
     std::unordered_map<std::string, TokenType> keywords;
-    std::unordered_map<std::string, TokenType> punctuator_open;
-    std::unordered_map<std::string, TokenType> punctuator_closed;
 
-    void initKeywords() noexcept;
+    void init() noexcept;
     bool isWhiteSpace(char c) noexcept;
     bool isAlpha(char c) noexcept;
     bool isDigit(char c) noexcept;
     bool isAlphaNumeric(char c) noexcept;
-    std::string getNextWord();
-    std::string getNextNumber();
+    std::string getNextWord() noexcept;
+    std::string getNextNumber() noexcept;
 };
