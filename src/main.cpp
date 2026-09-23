@@ -5,12 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <optional>
-#include <stdexcept>
 #include <string>
-#include <system_error>
 
 #include "lexer.hpp"
+#include "utils.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -51,7 +49,8 @@ int main(int argc, char *argv[]) {
     try {
         auto tokens = lexer.lex();
         for (auto &a : tokens)
-            std::cout << a.value << "\n";
+            std::cout << a.value << "-> " << a.type << "\n";
+
     } catch (std::exception &e) {
         std::cerr << e.what();
 
@@ -61,5 +60,6 @@ int main(int argc, char *argv[]) {
         std::filesystem::remove(preprocessed);
         return 1;
     }
+
     return 0;
 }
