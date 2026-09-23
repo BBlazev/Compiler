@@ -49,7 +49,8 @@ int main(int argc, char *argv[]) {
     try {
         auto tokens = lexer.lex();
         for (auto &a : tokens)
-            std::cout << a.value << "-> " << a.type << "\n";
+            std::cout << a.value << "-> " << a.type << " - LINE: " << a.line
+                      << ", COLUMN: " << a.column_number << "\n";
 
     } catch (std::exception &e) {
         std::cerr << e.what();

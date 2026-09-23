@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <iostream>
 
 #include "lexer.hpp"
@@ -13,13 +12,17 @@ std::ostream &operator<<(std::ostream &os, const TokenType &type) {
         return os << "IDENTIFIER";
     case TokenType::INTEGER_CONSTANT:
         return os << "INTEGER";
+    case TokenType::FLOAT_CONSTANT:
+        return os << "FLOAT_CONSTANT";
+    case TokenType::OPERATOR:
+        return os << "OPERATOR";
     case TokenType::KEYWORD:
         return os << "KEYWORD";
     case TokenType::PUNCTUATORS:
         return os << "PUNCTUATORS";
     case TokenType::SEMICOLON:
         return os << "SEMICOLON";
-    case TokenType::UNKNOWN:
-        return os << "UNKNOWN";
     }
+
+    return os << "UNKNOWN";
 }

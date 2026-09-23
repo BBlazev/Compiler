@@ -22,8 +22,11 @@ struct Token {
 
     TokenType type;
     std::string value;
+    int line;
+    int column_number;
 
-    Token(TokenType t, const std::string &v) : type(t), value(v) {}
+    Token(TokenType t, const std::string &v, int ln, int col)
+        : type(t), value(v), line(ln), column_number(col) {}
 };
 
 class Lexer {

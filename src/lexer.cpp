@@ -4,6 +4,9 @@
 
 #include "lexer.hpp"
 
+static int line_number = 1;
+static int column_number = 1;
+
 Lexer::Lexer(const std::string &src) : input(src), position(0) { init(); }
 
 Lexer::~Lexer() {}
@@ -20,8 +23,12 @@ void Lexer::init() noexcept {
 }
 
 bool Lexer::isWhiteSpace(char c) noexcept {
-
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+    if (c == '\n') {
+        line_number++;
+        column_number = 0;
+        return c;
+    }
+    return c == ' ' || c == '\t' || c == '\r';
 }
 
 bool Lexer::isDigit(char c) noexcept { return c >= '0' && c <= '9'; }
@@ -36,8 +43,10 @@ std::string Lexer::getNextWord() noexcept {
 
     std::size_t start = position;
 
-    while (position < input.length() && isAlphaNumeric(input[position]))
+    while (position < input.length() && isAlphaNumeric(input[position])) {
         position++;
+        column_number++;
+    }
 
     return input.substr(start, position - start);
 }
@@ -53,6 +62,7 @@ std::string Lexer::getNextNumber() noexcept {
                 break;
             hasDecimal = true;
         }
+        column_number++;
         position++;
     }
     return input.substr(start, position - start);
@@ -65,18 +75,19 @@ std::vector<Token> Lexer::lex() {
     while (position < input.length()) {
 
         char currentChar = input[position];
-
+        int col = column_number;
         if (isWhiteSpace(currentChar)) {
             position++;
+            column_number++;
             continue;
         }
 
         else if (isAlpha(currentChar)) {
             std::string word = getNextWord();
             if (keywords.find(word) != keywords.end()) {
-                tokens.emplace_back(TokenType::KEYWORD, word);
+                tokens.emplace_back(TokenType::KEYWORD, word, line_number, col);
             } else {
-                tokens.emplace_back(TokenType::IDENTIFIER, word);
+                tokens.emplace_back(TokenType::IDENTIFIER, word, line_number, col);
             }
         }
 
@@ -86,23 +97,31 @@ std::vector<Token> Lexer::lex() {
                 num += getNextWord();
                 throw std::runtime_error("Error\n");
             } else if (num.find('.') != std::string::npos) {
-                tokens.emplace_back(TokenType::FLOAT_CONSTANT, num);
+                tokens.emplace_back(TokenType::FLOAT_CONSTANT, num, line_number, col);
             } else {
-                tokens.emplace_back(TokenType::INTEGER_CONSTANT, num);
+                tokens.emplace_back(TokenType::INTEGER_CONSTANT, num, line_number, col);
             }
         }
 
         else if (currentChar == '+' || currentChar == '-' || currentChar == '*' ||
                  currentChar == '/') {
-            tokens.emplace_back(TokenType::OPERATOR, std::string(1, currentChar));
+            tokens.emplace_back(TokenType::OPERATOR, std::string(1, currentChar), line_number, col);
             position++;
+            column_number++;
         }
 
         else if (currentChar == '(' || currentChar == ')' || currentChar == '{' ||
                  currentChar == '}' || currentChar == ';') {
-            tokens.emplace_back(TokenType::PUNCTUATORS, std::string(1, currentChar));
+            tokens.emplace_back(TokenType::PUNCTUATORS, std::string(1, currentChar), line_number,
+                                col);
             position++;
+            column_number++;
         }
+
+        // else if (currentChar == '\n') {
+        //    column_number = 1;
+        //   line_number++;
+        //}
 
         else {
             throw std::runtime_error("Unknow char\n");
