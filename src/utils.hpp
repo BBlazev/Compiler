@@ -24,6 +24,8 @@ inline std::ostream &operator<<(std::ostream &os, const TokenType &type) {
         return os << "PUNCTUATORS";
     case TokenType::SEMICOLON:
         return os << "SEMICOLON";
+    case TokenType::RETURN:
+        return os << "RETURN";
     }
 
     return os << "UNKNOWN";

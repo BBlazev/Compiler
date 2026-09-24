@@ -14,7 +14,7 @@ void Lexer::init() noexcept {
     keywords["if"] = TokenType::KEYWORD;
     keywords["else"] = TokenType::KEYWORD;
     keywords["while"] = TokenType::KEYWORD;
-    keywords["return"] = TokenType::KEYWORD;
+    keywords["return"] = TokenType::RETURN;
     keywords["void"] = TokenType::KEYWORD;
 
     double_operators["=="] = TokenType::DOUBLE_OPERATOR;
@@ -34,7 +34,6 @@ void Lexer::advance() noexcept {
     if (input[position] == '\n') {
         line_number++;
         column_number = 0;
-        return;
     }
 
     position++;
@@ -42,11 +41,7 @@ void Lexer::advance() noexcept {
 }
 
 bool Lexer::isWhiteSpace(char c) noexcept {
-    if (c == '\n') {
-        advance();
-        return c;
-    }
-    return c == ' ' || c == '\t' || c == '\r';
+    return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
 bool Lexer::isDigit(char c) noexcept { return c >= '0' && c <= '9'; }
@@ -101,8 +96,10 @@ std::vector<Token> Lexer::lex() {
 
         else if (isAlpha(currentChar)) {
             std::string word = getNextWord();
-            if (keywords.find(word) != keywords.end()) {
-                tokens.emplace_back(TokenType::KEYWORD, std::move(word), line_number, col);
+            auto it = keywords.find(word);
+            if (it != keywords.end()) {
+                TokenType type = it->second;
+                tokens.emplace_back(type, std::move(word), line_number, col);
             } else {
                 tokens.emplace_back(TokenType::IDENTIFIER, std::move(word), line_number, col);
             }

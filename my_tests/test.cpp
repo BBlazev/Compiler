@@ -1,4 +1,6 @@
 int main(void) {
-    == ;
-    return a;
+
+    if (a < b) {
+        return 2 + 2;
+    }
 }

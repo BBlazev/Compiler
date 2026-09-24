@@ -16,7 +16,8 @@ enum class TokenType {
     SEMICOLON,
     OPERATOR,
     DOUBLE_OPERATOR,
-    UNKNOWN
+    UNKNOWN,
+    RETURN
 
 };
 
