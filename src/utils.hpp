@@ -5,7 +5,7 @@
 
 #include "lexer.hpp"
 
-std::ostream &operator<<(std::ostream &os, const TokenType &type) {
+inline std::ostream &operator<<(std::ostream &os, const TokenType &type) {
 
     switch (type) {
     case TokenType::IDENTIFIER:

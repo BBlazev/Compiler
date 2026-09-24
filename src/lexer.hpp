@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <iterator>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -52,13 +52,15 @@ class Lexer {
     int column_number = 1;
 
     std::unordered_map<std::string, TokenType> keywords;
+    std::unordered_map<std::string, TokenType> double_operators;
 
     void init() noexcept;
+    void advance() noexcept;
     bool isWhiteSpace(char c) noexcept;
     bool isAlpha(char c) noexcept;
     bool isDigit(char c) noexcept;
     bool isAlphaNumeric(char c) noexcept;
-    bool isOperator(char c) noexcept;
+
     char peek() noexcept;
 
     std::string getNextWord() noexcept;
