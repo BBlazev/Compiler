@@ -1,6 +1,5 @@
-int main(void) {
-
-    if (a < b) {
-        return 2 + 2;
-    }
+void main(int
 }
+{
+    return 2;
+    ;

@@ -144,11 +144,6 @@ std::vector<Token> Lexer::lex() {
             advance();
         }
 
-        // else if (currentChar == '\n') {
-        //    column_number = 1;
-        //   line_number++;
-        //}
-
         else {
             throw std::runtime_error(std::to_string(line_number) + ":" + std::to_string(col) +
                                      ": Unknown character '" + currentChar + "'\n");
