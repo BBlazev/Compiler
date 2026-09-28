@@ -10,6 +10,7 @@
 
 #include "asm_ast.hpp"
 #include "codegen.hpp"
+#include "emit.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "utils.hpp"
@@ -118,10 +119,11 @@ int main(int argc, char *argv[]) {
 
         x86::Program prog = gen_program(program);
 
+        emit(std::cout, prog);
         if (opts.stage == Stage::Codegen)
             return 0;
 
-        std::cout << "Emmision not implemented\n";
+        emit(std::cout, prog);
 
         return 1;
 
