@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "asm_ast.hpp"
+#include "codegen.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "utils.hpp"
@@ -106,7 +108,7 @@ int main(int argc, char *argv[]) {
             return 0;
 
         Parser parser(tokens);
-        [[maybe_unused]] Program program = parser.parse_program();
+        Program program = parser.parse_program();
 
         if (opts.dump_ast) {
             std::cerr << "--dump-ast: AST printer not written yet\n";
@@ -114,7 +116,13 @@ int main(int argc, char *argv[]) {
         if (opts.stage == Stage::Parse)
             return 0;
 
-        std::cerr << "code generation not implemented yet\n";
+        x86::Program prog = gen_program(program);
+
+        if (opts.stage == Stage::Codegen)
+            return 0;
+
+        std::cout << "Emmision not implemented\n";
+
         return 1;
 
     } catch (const std::exception &e) {
